@@ -10,6 +10,8 @@ public static class DependencyInjectionConfig
         services.AddScoped<IMovieRepository, MovieRepository>();
         services.AddScoped<IMovieService, MovieService>();
 
+        services.AddScoped<AuthService>();
+
         return services;
     }
 }

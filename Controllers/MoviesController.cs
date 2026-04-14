@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MovieTicketingAPI.Models;
 using MovieTicketingAPI.Services;
 
@@ -6,6 +7,7 @@ namespace MovieTicketingAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class MoviesController : ControllerBase
 {
     private readonly IMovieService _service;
@@ -16,6 +18,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Movie>>> GetAll()
     {
         var movies = await _service.GetMoviesAsync();
@@ -36,6 +39,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpPost("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Movie>> Create(Movie movie)
     {
         await _service.CreateMovieAsync(movie);
@@ -43,6 +47,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(Guid id, Movie movie)
     {
         if (id != movie.Id) return BadRequest(new { message = "O ID da URL não coincide com o ID do corpo da requisição." });
@@ -58,6 +63,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var existingMovie = await _service.GetMovieByIdAsync(id);
