@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieTicketingAPI.Models;
+using MovieTicketingAPI.Models.DTOs;
 using MovieTicketingAPI.Services;
+using NpgsqlTypes;
 
 namespace MovieTicketingAPI.Controllers;
 
@@ -19,42 +21,43 @@ public class MoviesController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<Movie>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Movie>>> GetAllAsync()
     {
-        var movies = await _service.GetMoviesAsync();
+        var movies = await _service.GetAllAsync();
 
         if (movies == null) return NotFound();
 
         return Ok(movies);
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Movie>> GetById(Guid id)
+    [HttpGet("{id}", Name = "GetMovieById")]
+    [AllowAnonymous]
+    public async Task<ActionResult<Movie>> GetByIdAsync(Guid id)
     {
-        var movie = await _service.GetMovieByIdAsync(id);
+        var movie = await _service.GetByIdAsync(id);
 
         if (movie == null) return NotFound(new { message = "Filme não encontrado." });
 
         return Ok(movie);
     }
 
-    [HttpPost("{id}")]
+    [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Movie>> Create(Movie movie)
+    public async Task<ActionResult<Movie>> CreateAsync([FromBody] CreateMovieDto dto)
     {
-        await _service.CreateMovieAsync(movie);
-        return CreatedAtAction(nameof(GetAll), new { id = movie.Id }, movie);
+        var movie = await _service.CreateAsync(dto);
+        return CreatedAtRoute("GetMovieById", new { id = movie.Id }, movie);
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Update(Guid id, Movie movie)
+    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] Movie movie)
     {
         if (id != movie.Id) return BadRequest(new { message = "O ID da URL não coincide com o ID do corpo da requisição." });
 
         try
         {
-            await _service.UpdateMovieAsync(id, movie);
+            await _service.UpdateAsync(id, movie);
             return NoContent();
         } catch (Exception ex)
         {
@@ -64,13 +67,13 @@ public class MoviesController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> DeleteAsync(Guid id)
     {
-        var existingMovie = await _service.GetMovieByIdAsync(id);
+        var existingMovie = await _service.GetByIdAsync(id);
 
         if (existingMovie == null) return NotFound(new { message = "Filme não encontrado para exclusão." });
 
-        await _service.DeleteMovieAsync(id);
+        await _service.DeleteAsync(id);
         return NoContent();
     }
 }

@@ -1,13 +1,14 @@
 ﻿using MovieTicketingAPI.Models;
+using MovieTicketingAPI.Models.DTOs;
 
 namespace MovieTicketingAPI.Services
 {
     public interface IMovieService
     {
-        Task<IEnumerable<Movie>> GetMoviesAsync();
-        Task<Movie?> GetMovieByIdAsync(Guid id);
-        Task CreateMovieAsync(Movie movie);
-        Task UpdateMovieAsync(Guid id, Movie movie);
-        Task DeleteMovieAsync(Guid id);
+        Task<IEnumerable<Movie>> GetAllAsync();
+        Task<Movie?> GetByIdAsync(Guid id);
+        Task<Movie> CreateAsync(CreateMovieDto dto);
+        Task UpdateAsync(Guid id, Movie movie);
+        Task DeleteAsync(Guid id);
     }
 }
