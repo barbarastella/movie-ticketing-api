@@ -8,7 +8,7 @@ namespace MovieTicketingAPI.Services
         Task<IEnumerable<Movie>> GetAllAsync();
         Task<Movie?> GetByIdAsync(Guid id);
         Task<Movie> CreateAsync(CreateMovieDto dto);
-        Task UpdateAsync(Guid id, Movie movie);
+        Task<Movie?> UpdateAsync(Guid id, UpdateMovieDto dto);
         Task DeleteAsync(Guid id);
     }
 }

@@ -37,9 +37,13 @@ namespace MovieTicketingAPI.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var movie = await GetByIdAsync(id);
+            var movie = await _context.Movies.FindAsync(id);
 
-            if (movie != null) await _context.Movies.Where(m => m.Id == id).ExecuteDeleteAsync();
+            if (movie != null)
+            {
+                _context.Movies.Remove(movie);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

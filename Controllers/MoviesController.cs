@@ -12,19 +12,18 @@ namespace MovieTicketingAPI.Controllers;
 [Authorize]
 public class MoviesController : ControllerBase
 {
-    private readonly IMovieService _service;
+    private readonly IMovieService _movieService;
 
     public MoviesController(IMovieService service)
     {
-        _service = service;
+        _movieService = service;
     }
 
     [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Movie>>> GetAll()
     {
-        var movies = await _service.GetAllAsync();
-
+        var movies = await _movieService.GetAllAsync();
         if (movies == null) return NotFound();
 
         return Ok(movies);
@@ -34,8 +33,7 @@ public class MoviesController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<Movie>> GetById(Guid id)
     {
-        var movie = await _service.GetByIdAsync(id);
-
+        var movie = await _movieService.GetByIdAsync(id);
         if (movie == null) return NotFound(new { message = "Filme não encontrado." });
 
         return Ok(movie);
@@ -45,36 +43,29 @@ public class MoviesController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Movie>> Create([FromBody] CreateMovieDto dto)
     {
-        var movie = await _service.CreateAsync(dto);
+        var movie = await _movieService.CreateAsync(dto);
         return CreatedAtRoute("GetMovieById", new { id = movie.Id }, movie);
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] Movie movie)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateMovieDto dto)
     {
-        if (id != movie.Id) return BadRequest(new { message = "O ID da URL não coincide com o ID do corpo da requisição." });
+        var updatedMovie = await _movieService.UpdateAsync(id, dto);
+        if (updatedMovie == null) return NotFound(new { message = "Filme não encontrado." });
 
-        try
-        {
-            await _service.UpdateAsync(id, movie);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
+        return Ok(updatedMovie);
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var existingMovie = await _service.GetByIdAsync(id);
+        var existingMovie = await _movieService.GetByIdAsync(id);
 
         if (existingMovie == null) return NotFound(new { message = "Filme não encontrado para exclusão." });
 
-        await _service.DeleteAsync(id);
+        await _movieService.DeleteAsync(id);
         return NoContent();
     }
 }

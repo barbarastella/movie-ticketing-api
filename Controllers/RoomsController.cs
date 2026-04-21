@@ -11,7 +11,6 @@ namespace MovieTicketingAPI.Controllers;
 public class RoomsController : ControllerBase
 {
     private readonly IRoomService _roomService;
-    public record CreateRoomDto(string Name);
 
     public RoomsController(IRoomService roomService)
     {
@@ -40,7 +39,7 @@ public class RoomsController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest(new { message = "O nome da sala é obrigatório." });
 
-        var room = await _roomService.CreateRoomAsync(dto);
+        var room = await _roomService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = room.Id }, room);
     }
 
