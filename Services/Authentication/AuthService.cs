@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace MovieTicketingAPI.Services;
+namespace MovieTicketingAPI.Services.Authentication;
 
 public class AuthService
 {

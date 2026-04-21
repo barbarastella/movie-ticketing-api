@@ -10,7 +10,6 @@ namespace MovieTicketingAPI.Controllers;
 public class SeatsController : ControllerBase
 {
     private readonly ISeatService _seatService;
-    public record CreateSeatDto(string SeatNumber, Guid RoomId);
 
     public SeatsController(ISeatService seatService)
     {

@@ -1,4 +1,4 @@
-﻿namespace MovieTicketingAPI.Repositories;
+﻿namespace MovieTicketingAPI.Repositories.SeatLock;
 
 public interface ISeatLockRepository
 {

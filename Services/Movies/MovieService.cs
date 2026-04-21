@@ -1,8 +1,8 @@
 ﻿using MovieTicketingAPI.Models;
 using MovieTicketingAPI.Models.DTOs;
-using MovieTicketingAPI.Repositories;
+using MovieTicketingAPI.Repositories.Movies;
 
-namespace MovieTicketingAPI.Services
+namespace MovieTicketingAPI.Services.Movies
 {
     public class MovieService : IMovieService
     {
@@ -39,13 +39,6 @@ namespace MovieTicketingAPI.Services
             return movie;
         }
 
-        public async Task UpdateAsync(Guid id, Movie movie)
-        {
-            var existingMovie = await _movieRepository.GetByIdAsync(id);
-            if (existingMovie == null) throw new Exception("Filme não encontrado");
-
-            await _movieRepository.UpdateAsync(movie);
-        }
         public async Task<Movie?> UpdateAsync(Guid id, UpdateMovieDto dto)
         {
             var existingMovie = await _movieRepository.GetByIdAsync(id);

@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 
-namespace MovieTicketingAPI.Repositories;
+namespace MovieTicketingAPI.Repositories.SeatLock;
 
 public class RedisSeatLockRepository : ISeatLockRepository
 {

@@ -1,8 +1,10 @@
 ﻿using MovieTicketingAPI.Models;
 using MovieTicketingAPI.Models.DTOs;
-using MovieTicketingAPI.Repositories;
+using MovieTicketingAPI.Repositories.MovieSessions;
+using MovieTicketingAPI.Repositories.SeatLock;
+using MovieTicketingAPI.Repositories.Tickets;
 
-namespace MovieTicketingAPI.Services;
+namespace MovieTicketingAPI.Services.Tickets;
 
 public class TicketService : ITicketService
 {

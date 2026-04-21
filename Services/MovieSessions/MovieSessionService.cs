@@ -1,7 +1,8 @@
 ﻿using MovieTicketingAPI.Models;
-using MovieTicketingAPI.Repositories;
 using MovieTicketingAPI.Models.DTOs;
 using MovieTicketingAPI.Repositories.Rooms;
+using MovieTicketingAPI.Repositories.Movies;
+using MovieTicketingAPI.Repositories.MovieSessions;
 
 namespace MovieTicketingAPI.Services.MovieSessions;
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketingAPI.Models.DTOs;
-using MovieTicketingAPI.Services;
+using MovieTicketingAPI.Services.Tickets;
 using System.Security.Claims;
 
 namespace MovieTicketingAPI.Controllers;
@@ -12,7 +12,6 @@ namespace MovieTicketingAPI.Controllers;
 public class TicketsController : ControllerBase
 {
     private readonly ITicketService _ticketService;
-
     public TicketsController(ITicketService ticketService)
     {
         _ticketService = ticketService;

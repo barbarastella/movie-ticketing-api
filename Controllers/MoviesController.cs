@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketingAPI.Models;
 using MovieTicketingAPI.Models.DTOs;
-using MovieTicketingAPI.Services;
+using MovieTicketingAPI.Services.Movies;
 using NpgsqlTypes;
 
 namespace MovieTicketingAPI.Controllers;
@@ -13,7 +13,6 @@ namespace MovieTicketingAPI.Controllers;
 public class MoviesController : ControllerBase
 {
     private readonly IMovieService _movieService;
-
     public MoviesController(IMovieService service)
     {
         _movieService = service;

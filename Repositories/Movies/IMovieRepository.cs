@@ -1,6 +1,6 @@
 ﻿using MovieTicketingAPI.Models;
 
-namespace MovieTicketingAPI.Repositories
+namespace MovieTicketingAPI.Repositories.Movies
 {
     public interface IMovieRepository
     {

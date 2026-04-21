@@ -1,10 +1,15 @@
-﻿using MovieTicketingAPI.Repositories;
+﻿using MovieTicketingAPI.Repositories.Movies;
+using MovieTicketingAPI.Repositories.MovieSessions;
 using MovieTicketingAPI.Repositories.Rooms;
+using MovieTicketingAPI.Repositories.SeatLock;
 using MovieTicketingAPI.Repositories.Seats;
-using MovieTicketingAPI.Services;
+using MovieTicketingAPI.Repositories.Tickets;
+using MovieTicketingAPI.Services.Authentication;
+using MovieTicketingAPI.Services.Movies;
 using MovieTicketingAPI.Services.MovieSessions;
 using MovieTicketingAPI.Services.Rooms;
 using MovieTicketingAPI.Services.Seats;
+using MovieTicketingAPI.Services.Tickets;
 
 namespace MovieTicketingAPI.Extensions;
 

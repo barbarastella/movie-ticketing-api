@@ -1,7 +1,7 @@
 ﻿using MovieTicketingAPI.Models;
 using MovieTicketingAPI.Models.DTOs;
 
-namespace MovieTicketingAPI.Services;
+namespace MovieTicketingAPI.Services.Rooms;
 
 public interface IRoomService
 {

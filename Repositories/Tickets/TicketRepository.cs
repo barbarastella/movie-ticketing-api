@@ -2,7 +2,7 @@
 using MovieTicketingAPI.Models;
 using MovieTicketingAPI.Persistence;
 
-namespace MovieTicketingAPI.Repositories;
+namespace MovieTicketingAPI.Repositories.Tickets;
 
 public class TicketRepository : ITicketRepository
 {

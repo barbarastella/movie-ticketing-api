@@ -44,7 +44,6 @@ ScaffoldingReadMe.txt
 CodeCoverage/
 *.user
 .vs
-Persistence/DbSeeder.cs
 
 # MSBuild Binary and Structured Log
 *.binlog

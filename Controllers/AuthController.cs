@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MovieTicketingAPI.Services;
 using MovieTicketingAPI.Models.DTOs;
+using MovieTicketingAPI.Services.Authentication;
 
 namespace MovieTicketingAPI.Controllers;
 
