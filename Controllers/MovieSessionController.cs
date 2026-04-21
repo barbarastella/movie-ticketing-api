@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MovieTicketingAPI.Models.DTOs;
 using MovieTicketingAPI.Services.MovieSessions;
 
 namespace MovieTicketingAPI.Controllers;
@@ -8,7 +10,6 @@ namespace MovieTicketingAPI.Controllers;
 public class MovieSessionsController : ControllerBase
 {
     private readonly IMovieSessionService _movieSessionService;
-    public record CreateMovieSessionDto(Guid MovieId, Guid RoomId, DateTime StartTime);
 
     public MovieSessionsController(IMovieSessionService movieSessionService)
     {
@@ -32,15 +33,34 @@ public class MovieSessionsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateMovieSessionDto dto)
     {
-        var session = await _movieSessionService.CreateSessionAsync(dto.MovieId, dto.RoomId, dto.StartTime);
-        if (session == null) return BadRequest(new { message = "Filme ou Sala informados não existem no banco de dados." });
+        var session = await _movieSessionService.CreateAsync(dto);
+        if (session == null) return BadRequest(new { message = "Filme ou Sala informados não existem." });
 
         return CreatedAtAction(nameof(GetById), new { id = session.Id }, session);
     }
 
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateMovieSessionDto dto)
+    {
+        try
+        {
+            var updatedSession = await _movieSessionService.UpdateAsync(id, dto);
+            if (updatedSession == null) return NotFound(new { message = "Sessão não encontrada." });
+
+            return Ok(updatedSession);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _movieSessionService.DeleteAsync(id);

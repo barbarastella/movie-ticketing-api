@@ -29,9 +29,19 @@ public class MovieSessionRepository : IMovieSessionRepository
         .FirstOrDefaultAsync(ms => ms.Id == id);
     }
 
+    public async Task<MovieSession?> GetByIdAsync(Guid id)
+    {
+       return await _context.MovieSessions.FirstOrDefaultAsync(ms => ms.Id == id);
+    }
+
     public async Task AddAsync(MovieSession session)
     {
         await _context.MovieSessions.AddAsync(session);
+        await _context.SaveChangesAsync();
+    }
+    public async Task UpdateAsync(MovieSession session)
+    {
+        _context.MovieSessions.Update(session);
         await _context.SaveChangesAsync();
     }
 
