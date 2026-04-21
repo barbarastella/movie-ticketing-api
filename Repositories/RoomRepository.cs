@@ -29,6 +29,12 @@ public class RoomRepository : IRoomRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateAsync(Room room)
+    {
+        _context.Rooms.Update(room);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(Guid id)
     {
         var room = await _context.Rooms.FindAsync(id);

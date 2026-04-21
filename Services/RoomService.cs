@@ -1,4 +1,5 @@
 ﻿using MovieTicketingAPI.Models;
+using MovieTicketingAPI.Models.DTOs;
 using MovieTicketingAPI.Repositories.Rooms;
 
 namespace MovieTicketingAPI.Services.Rooms;
@@ -22,17 +23,26 @@ public class RoomService : IRoomService
         return await _roomRepository.GetByIdAsync(id);
     }
 
-    public async Task<Room> CreateRoomAsync(string name)
+    public async Task<Room> CreateAsync(CreateRoomDto dto)
     {
         var room = new Room
         {
             Id = Guid.NewGuid(),
-            Name = name
+            Name = dto.Name
         };
 
         await _roomRepository.AddAsync(room);
-
         return room;
+    }
+    public async Task<Room?> UpdateAsync(Guid id, UpdateRoomDto dto)
+    {
+        var existingRoom = await _roomRepository.GetByIdAsync(id);
+        if (existingRoom == null) return null;
+
+        existingRoom.Name = dto.Name;
+
+        await _roomRepository.UpdateAsync(existingRoom);
+        return existingRoom;
     }
 
     public async Task DeleteAsync(Guid id)
