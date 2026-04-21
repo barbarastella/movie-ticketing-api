@@ -1,4 +1,5 @@
 ﻿using MovieTicketingAPI.Models;
+using MovieTicketingAPI.Models.DTOs;
 using MovieTicketingAPI.Repositories.Rooms;
 using MovieTicketingAPI.Repositories.Seats;
 
@@ -39,6 +40,21 @@ public class SeatService : ISeatService
 
         await _seatRepository.AddAsync(seat);
         return seat;
+    }
+
+    public async Task<Seat?> UpdateAsync(Guid id, UpdateSeatDto dto)
+    {
+        var existingSeat = await _seatRepository.GetByIdAsync(id);
+        if (existingSeat == null) return null;
+
+        var roomExists = await _roomRepository.GetByIdAsync(dto.RoomId);
+        if (roomExists == null) return null;
+
+        existingSeat.SeatNumber = dto.SeatNumber;
+        existingSeat.RoomId = dto.RoomId;
+
+        await _seatRepository.UpdateAsync(existingSeat);
+        return existingSeat;
     }
 
     public async Task DeleteAsync(Guid id)
