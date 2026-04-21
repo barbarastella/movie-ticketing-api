@@ -39,7 +39,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        DbSeeder.SeedAdminUser(context);
+        DbSeeder.SeedData(context);
     } catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
