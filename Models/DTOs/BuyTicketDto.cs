@@ -4,6 +4,9 @@ namespace MovieTicketingAPI.Models.DTOs;
 
 public class BuyTicketDto
 {
-    [Required(ErrorMessage = "O ID do filme é obrigatório.")]
-    public Guid MovieId { get; set; }
+    [Required]
+    public Guid MovieSessionId { get; set; }
+
+    [Required]
+    public Guid SeatId { get; set; }
 }

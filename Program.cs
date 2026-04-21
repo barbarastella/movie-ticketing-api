@@ -1,15 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using MovieTicketingAPI.Extensions;
 using MovieTicketingAPI.Persistence;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+var redisConnectionString = builder.Configuration.GetConnectionString("RedisConnection");
+
+if (string.IsNullOrEmpty(redisConnectionString)) throw new InvalidOperationException("A string de conexão do Redis não foi encontrada. Verifique o User Secrets ou Variáveis de Ambiente.");
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention());
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
 builder.Services.AddProjectDependencies();
 
 builder.Services.AddJwtAuthentication(builder.Configuration);

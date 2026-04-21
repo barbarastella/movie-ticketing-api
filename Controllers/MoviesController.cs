@@ -21,7 +21,7 @@ public class MoviesController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<Movie>>> GetAllAsync()
+    public async Task<ActionResult<IEnumerable<Movie>>> GetAll()
     {
         var movies = await _service.GetAllAsync();
 
@@ -32,7 +32,7 @@ public class MoviesController : ControllerBase
 
     [HttpGet("{id}", Name = "GetMovieById")]
     [AllowAnonymous]
-    public async Task<ActionResult<Movie>> GetByIdAsync(Guid id)
+    public async Task<ActionResult<Movie>> GetById(Guid id)
     {
         var movie = await _service.GetByIdAsync(id);
 
@@ -43,7 +43,7 @@ public class MoviesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Movie>> CreateAsync([FromBody] CreateMovieDto dto)
+    public async Task<ActionResult<Movie>> Create([FromBody] CreateMovieDto dto)
     {
         var movie = await _service.CreateAsync(dto);
         return CreatedAtRoute("GetMovieById", new { id = movie.Id }, movie);
@@ -51,7 +51,7 @@ public class MoviesController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] Movie movie)
+    public async Task<IActionResult> Update(Guid id, [FromBody] Movie movie)
     {
         if (id != movie.Id) return BadRequest(new { message = "O ID da URL não coincide com o ID do corpo da requisição." });
 
@@ -59,7 +59,8 @@ public class MoviesController : ControllerBase
         {
             await _service.UpdateAsync(id, movie);
             return NoContent();
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             return NotFound(new { message = ex.Message });
         }
@@ -67,7 +68,7 @@ public class MoviesController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteAsync(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var existingMovie = await _service.GetByIdAsync(id);
 

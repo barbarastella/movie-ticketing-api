@@ -18,18 +18,34 @@ public class TicketsController : ControllerBase
         _ticketService = ticketService;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> BuyAsync([FromBody] BuyTicketDto dto)
+    [HttpPost("reserve")]
+    public async Task<IActionResult> ReserveSeat([FromBody] BuyTicketDto dto)
     {
-        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized(new { message = "Usuário não autorizado." });
 
-        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
-            return Unauthorized(new { message = "Token inválido ou usário não identificado." });
+        var success = await _ticketService.ReserveSeatAsync(userId, dto.MovieSessionId, dto.SeatId);
+        if (!success) return Conflict(new { message = "Assento bloqueado para compra neste momento." });
 
-        var ticket = await _ticketService.BuyAsync(userId, dto);
+        return Ok(new { message = "Assento reservado para processo de compra." });
+    }
 
-        if (ticket == null) return NotFound(new { message = "Filme não encontrado." });
+    [HttpPost("confirm")]
+    public async Task<IActionResult> ConfirmPurchase([FromBody] BuyTicketDto dto)
+    {
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized(new { message = "Usuário não autorizado." });
 
-        return Ok(new { message = "Ingresso comprado com sucesso!", ticket = ticket });
+        try
+        {
+            var ticket = await _ticketService.ConfirmPurchaseAsync(userId, dto);
+            if (ticket == null) return NotFound(new { message = "Dados inválidos." });
+
+            return Ok(new { message = "Compra confirmada.", ticket });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }

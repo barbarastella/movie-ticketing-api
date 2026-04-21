@@ -12,7 +12,16 @@ public class Ticket
     public Guid UserId { get; set; }
 
     [Required]
-    public Guid MovieId { get; set; }
+    public Guid MovieSessionId { get; set; }
+
+    [ForeignKey(nameof(MovieSessionId))]
+    public MovieSession? MovieSession { get; set; }
+
+    [Required]
+    public Guid SeatId { get; set; }
+
+    [ForeignKey(nameof(SeatId))]
+    public Seat? Seat { get; set; }
 
     [Required]
     public DateTime PurchaseDate { get; set; }
@@ -20,11 +29,5 @@ public class Ticket
     [Required]
     [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; }
-
-    [ForeignKey("UserId")]
-    public User? User { get; set; }
-
-    [ForeignKey("MovieId")]
-    public Movie? Movie { get; set; }
 
 }

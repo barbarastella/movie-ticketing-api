@@ -9,15 +9,15 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
     public void Configure(EntityTypeBuilder<Ticket> builder)
     {
         builder
-            .HasOne(t => t.User)
+            .HasOne(t => t.MovieSession)
             .WithMany()
-            .HasForeignKey(t => t.UserId)
+            .HasForeignKey(t => t.MovieSessionId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .HasOne(t => t.Movie)
+            .HasOne(t => t.Seat)
             .WithMany()
-            .HasForeignKey(t => t.MovieId)
+            .HasForeignKey(t => t.SeatId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

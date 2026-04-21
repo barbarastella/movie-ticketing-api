@@ -1,4 +1,5 @@
-﻿using MovieTicketingAPI.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieTicketingAPI.Models;
 using MovieTicketingAPI.Persistence;
 
 namespace MovieTicketingAPI.Repositories;
@@ -16,5 +17,12 @@ public class TicketRepository : ITicketRepository
     {
         await _context.Tickets.AddAsync(ticket);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> IsSeatSoldAsync(Guid movieSessionId, Guid seatId)
+    {
+        return await _context.Tickets.AnyAsync(t =>
+            t.MovieSessionId == movieSessionId &&
+            t.SeatId == seatId);
     }
 }
