@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="MovieTicketingAPI.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/MovieTicketingAPI/MovieTicketingAPI.csproj" />
+  </Folder>
+  <Project Path="tests/MovieTicketingAPI.Tests/MovieTicketingAPI.Tests.csproj" />
 </Solution>
