@@ -14,6 +14,8 @@
 
 Uma API RESTful completa desenvolvida para o gerenciamento e venda de ingressos de cinema, buscando simular o fluxo real de um cinema.
 
+![Demonstração](./.github/images/demo.png)
+
 <details>
 <summary><strong>⭕ Detalhamento da stack</strong></summary><br/>
 
@@ -243,7 +245,7 @@ Legenda das tabelas:
 
 **Pré-requisitos:** [.NET SDK](https://dotnet.microsoft.com/download) e [Docker Desktop](https://www.docker.com/products/docker-desktop) instalados.
 
-```
+```bash
 # Instale os pacotes necessários
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
 dotnet add package EFCore.NamingConventions
