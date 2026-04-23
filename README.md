@@ -43,7 +43,9 @@ Uma API RESTful completa desenvolvida para o gerenciamento e venda de ingressos 
 
 - [x] Sistema de trava (lock) de assentos que reserva a poltrona selecionada reservado por 5 minutos para o utilizador, impedindo que outra pessoa o compre simultaneamente;
 
-- [x] Verificação de integridade referencial e regras de negócio (ex: não permitir poltronas em salas inexistentes ou sessões sem filmes);
+- [x] Middleware global de tratamento de erros, interceptando exceções de domínio e erros silenciosos para padronizar as respostas da API no formato oficial da RFC 7807 (problem details);
+
+- [x] Cobertura de testes unitários da camada de Services utilizando [xUnit](https://xunit.net/?tabs=cs) e [Moq](https://github.com/devlooped/moq), seguindo o padrão AAA (arrange, act, assert) para garantir a integridade das regras de negócio;
 
 - [x] Documentação em interface interativa para testes de todos os endpoints via Swagger.
 
@@ -153,7 +155,7 @@ Todas as respostas da API seguem um formato JSON previsível para facilitar a in
 
 > A documentação interativa e completa de todos os endpoints, incluindo os esquemas de requisição e resposta, está disponível via [Swagger UI](https://swagger.io/) ao rodar a aplicação (acessível em `/swagger`).
 
-**Exemplo de Sucesso (200 OK / 201 Created) - Consulta de Filme:**
+**Exemplo de Sucesso (200, 201):**
 
 ```json
 {
@@ -167,15 +169,17 @@ Todas as respostas da API seguem um formato JSON previsível para facilitar a in
 }
 ```
 
-**Exemplos de Erro de Negócio ou Validação (400 Bad Request / 404 Not Found):**
+**Exemplos de Erro (400, 401, 403, 404, 405, 409):**
 
 ```json
 {
-  "message": "Filme não encontrado."
+  "type": "https://httpstatuses.io/401",
+  "title": "Unauthorized",
+  "status": 401,
+  "detail": "Você não está autenticado. Forneça um token válido.",
+  "instance": "/api/movies"
 }
 ```
-
-- Rotas bloqueadas por falta de token JWT (401 Unauthorized) ou falta de privilégios de Admin (403 Forbidden) retornam o respectivo status code HTTP com o corpo da resposta vazio, seguindo o padrão de segurança do middleware nativo do ASP.NET Core.
 
 ##
 
@@ -246,17 +250,22 @@ Legenda das tabelas:
 **Pré-requisitos:** [.NET SDK](https://dotnet.microsoft.com/download) e [Docker Desktop](https://www.docker.com/products/docker-desktop) instalados.
 
 ```bash
-# Instale os pacotes necessários
-dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
-dotnet add package EFCore.NamingConventions
-dotnet add package Microsoft.EntityFrameworkCore.Design
-dotnet add package Microsoft.EntityFrameworkCore.Tools
-dotnet add package Swashbuckle.AspNetCore
-dotnet add package BCrypt.Net-Next
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
-dotnet add package StackExchange.Redis
+# Instale a ferramenta global do EF Core
+dotnet tool install --global dotnet-ef
+
+# Instale os pacotes necessários nos respectivos projetos
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package EFCore.NamingConventions
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package Microsoft.EntityFrameworkCore.Design
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package Microsoft.EntityFrameworkCore.Tools
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package Swashbuckle.AspNetCore
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package BCrypt.Net-Next
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package Microsoft.AspNetCore.Authentication.JwtBearer
+dotnet add src/MovieTicketingAPI/MovieTicketingAPI.csproj package StackExchange.Redis
+dotnet add tests/MovieTicketingAPI.Tests/MovieTicketingAPI.Tests.csproj package Moq
 
 # Inicialize o gerenciador de variáveis de ambiente locais
+cd src/MovieTicketingAPI
 dotnet user-secrets init
 
 ## Configure a conexão com o PostgreSQL
@@ -268,14 +277,24 @@ dotnet user-secrets set "ConnectionStrings:RedisConnection" "localhost:6379"
 ## Configure a chave do JWT (mínimo de 32 caracteres)
 dotnet user-secrets set "JwtSettings:SecretKey" "InserirChaveAquiComNoMinimo32Caracteres"
 
-# Inicialize os contêineres do PostgreSQL e Redis
+# Configure as seguintes variáveis de ambiente baseadas no .env.example
+# As credenciais devem ser idênticas às configuradas no User-Secrets
+## DB_USER= usuário do banco de dados
+## DB_PASSWORD= senha do banco de dados
+## DB_NAME= nome do banco de dados
+
+# Inicialize os contêineres do PostgreSQL e Redis na raiz do projeto
+cd ../..
 docker compose up -d
 
-# Aplique as migrations do banco de dados
-dotnet ef database update
+# Aplique as migrations do banco de dados (pelo )
+dotnet ef database update --project src/MovieTicketingAPI/MovieTicketingAPI.csproj
 
 # Inicie a aplicação
-dotnet run
+dotnet run --project src/MovieTicketingAPI/MovieTicketingAPI.csproj
+
+# Execução de testes unitários
+dotnet test
 ```
 
 - **Observação:** Se a sua migration falhar ou o Docker não subir o PostgreSQL acusando que a porta já está em uso, é provável que você tenha uma instalação local do Postgres rodando. Para resolver, siga os passos abaixo e depois refaça a inicialização dos contêineres e das migrations.
