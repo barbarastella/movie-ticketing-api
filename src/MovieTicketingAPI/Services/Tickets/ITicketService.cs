@@ -6,6 +6,6 @@ namespace MovieTicketingAPI.Services.Tickets
     public interface ITicketService
     {
         Task<bool> ReserveSeatAsync(Guid userId, Guid movieSessionId, Guid seatId);
-        Task<Ticket?> ConfirmPurchaseAsync(Guid userId, BuyTicketDto dto);
+        Task<Ticket> ConfirmPurchaseAsync(Guid userId, BuyTicketDto dto);
     }
 }

@@ -59,6 +59,21 @@ public class TicketServiceTests
     }
 
     [Fact]
+    public async Task ConfirmPurchaseAsync_WhenSessionNotFound_ShouldThrowKeyNotFoundException()
+    {
+        var userId = Guid.NewGuid();
+        var dto = new BuyTicketDto(Guid.NewGuid(), Guid.NewGuid());
+
+        _ticketRepositoryMock.Setup(r => r.IsSeatSoldAsync(dto.MovieSessionId, dto.SeatId)).ReturnsAsync(false);
+        _lockRepositoryMock.Setup(r => r.IsSeatLockedAsync(dto.MovieSessionId, dto.SeatId)).ReturnsAsync(true);
+        _sessionRepositoryMock.Setup(r => r.GetByIdWithMovieAsync(dto.MovieSessionId)).ReturnsAsync((MovieSession?)null);
+
+        var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _ticketService.ConfirmPurchaseAsync(userId, dto));
+
+        Assert.Equal("A sessão ou o filme não foram encontrados no catálogo.", exception.Message);
+    }
+
+    [Fact]
     public async Task ConfirmPurchaseAsync_WhenValid_ShouldReturnTicketAndReleaseLock()
     {
         var userId = Guid.NewGuid();

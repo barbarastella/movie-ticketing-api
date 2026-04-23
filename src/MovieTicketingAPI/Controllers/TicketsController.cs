@@ -35,16 +35,8 @@ public class TicketsController : ControllerBase
         var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!Guid.TryParse(userIdStr, out var userId)) return Unauthorized(new { message = "Usuário não autorizado." });
 
-        try
-        {
-            var ticket = await _ticketService.ConfirmPurchaseAsync(userId, dto);
-            if (ticket == null) return NotFound(new { message = "Dados inválidos." });
+        var ticket = await _ticketService.ConfirmPurchaseAsync(userId, dto);
 
-            return Ok(new { message = "Compra confirmada.", ticket });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        return Ok(new { message = "Compra confirmada.", ticket });
     }
 }

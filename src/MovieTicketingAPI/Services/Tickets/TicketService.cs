@@ -22,22 +22,28 @@ public class TicketService : ITicketService
     public async Task<bool> ReserveSeatAsync(Guid userId, Guid movieSessionId, Guid seatId)
     {
         var isSold = await _ticketRepository.IsSeatSoldAsync(movieSessionId, seatId);
-        if (isSold) return false; 
+        if (isSold) return false;
 
         var expirationTime = TimeSpan.FromMinutes(5);
         return await _seatLockRepository.LockSeatAsync(movieSessionId, seatId, userId, expirationTime);
     }
 
-    public async Task<Ticket?> ConfirmPurchaseAsync(Guid userId, BuyTicketDto dto)
+    public async Task<Ticket> ConfirmPurchaseAsync(Guid userId, BuyTicketDto dto)
     {
         var isSold = await _ticketRepository.IsSeatSoldAsync(dto.MovieSessionId, dto.SeatId);
-        if (isSold) throw new InvalidOperationException("O assento já foi vendido.");
+
+        if (isSold)
+            throw new InvalidOperationException("O assento já foi vendido.");
 
         var isLocked = await _seatLockRepository.IsSeatLockedAsync(dto.MovieSessionId, dto.SeatId);
-        if (!isLocked) throw new InvalidOperationException("O tempo de reserva esgotou.");
+
+        if (!isLocked)
+            throw new InvalidOperationException("O tempo de reserva esgotou.");
 
         var session = await _movieSessionRepository.GetByIdWithMovieAsync(dto.MovieSessionId);
-        if (session == null || session.Movie == null) return null;
+
+        if (session == null || session.Movie == null)
+            throw new KeyNotFoundException("A sessão ou o filme não foram encontrados no catálogo.");
 
         var ticket = new Ticket
         {
